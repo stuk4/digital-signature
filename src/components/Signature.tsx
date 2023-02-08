@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { MouseEventHandler, useEffect, useRef, useState } from 'react'
 
 interface CanvasProps{
     width?:number;
@@ -20,8 +20,9 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
     const [signature,setSignature] = useState<string | null>(null);
 
     const startDrawing = (e:React.MouseEvent<HTMLCanvasElement>) =>{
-        if(!refCanvas.current) return;
+        if(!refCanvas.current || drawing) return;
         const elementCanvas = refCanvas.current
+      
         setDrawing(true)
 
         setLastX(e.clientX - elementCanvas.offsetLeft)
@@ -49,6 +50,8 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         setPoints([...points,{x,y}])
         context2d?.beginPath();
         context2d?.moveTo(points[0].x,points[0].y);
+        context2d!.lineCap = "round"
+        context2d!.lineJoin = "round"
         for (let i = 1; i < points.length - 2; i++) {
             const xc = (points[i].x + points[i + 1].x) / 2;
             const yc = (points[i].y + points[i + 1].y) / 2;
@@ -58,6 +61,7 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
 
     }
     const stopDrawing = () =>{
+        if (!drawing) return;
         setDrawing(false)
         if(!refCanvas.current) return;
         const elementCanvas = refCanvas.current
@@ -66,6 +70,11 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         setLastX(undefined)
         setLastY(undefined)
     }
+    const handleClick = (e: React.MouseEvent<HTMLCanvasElement, MouseEvent>) => {
+        if(!drawing) startDrawing(e)
+        if(drawing) stopDrawing()
+        setDrawing(!drawing);
+    };
     useEffect(()=>{
         const initializeCanvas = () =>{
             if(!refCanvas.current) return;
@@ -84,9 +93,12 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         style={{
             background:"white"
         }}
-        onMouseDown={startDrawing}
-        onMouseMove={draw}
-        onMouseUp={stopDrawing}
+        onClick={handleClick}
+     
+        onMouseMove={drawing ? draw : () => {}}
+        // onMouseDown={startDrawing}
+        // onMouseMove={draw}
+        // onMouseUp={stopDrawing}
 
     />
   )
