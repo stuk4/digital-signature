@@ -1,9 +1,41 @@
-
+*{
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
 .container{
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   width: 100%;
   min-height: 100vh;
   background: gainsboro;
+}
+canvas {
+  width: 500px;
+  height: 500px;
+  background: white;
+}
+
+@media (max-width: 767px) {
+  
+  canvas {
+    width: 300px;
+    height: 300px;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  canvas {
+    width: 400px;
+    height: 400px;
+  }
+}
+
+@media (min-width: 992px) {
+  canvas {
+    width: 500px;
+    height: 500px;
+  }
 }

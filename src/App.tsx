@@ -1,21 +1,30 @@
 
+import { useRef } from 'react';
 import './App.css'
-import { Signature } from './components/Signature'
-import { SignatureMobile } from './components/SignatureMobile'
+import { MySignaturePad } from './components/MySignaturePad';
+import SignaturePad from 'signature_pad';
 
 function App() {
-
+  // Example how to use signaturePadRef
+  const sigPadRef = useRef<SignaturePad>();
+  const handleCLear = () =>{
+    console.log(sigPadRef.current?.toDataURL())
+    sigPadRef.current?.clear()
+  }
   return (
     <div className="container">
-        {/* <Signature 
-            width={400}
-            height={400}
-            lineWidth={2.5}
-        /> */}
-        <SignatureMobile 
-            width={400}
-            height={400}
-            lineWidth={2.5}
+        <button
+          onClick={handleCLear}
+        >Clear</button>
+        <br />
+        <br />
+        <MySignaturePad 
+          signaturePadRef={sigPadRef} 
+          canvasProps={{
+            style:{
+              border:"1px dashed #000"
+            }
+          }}
         />
     </div>
   )
