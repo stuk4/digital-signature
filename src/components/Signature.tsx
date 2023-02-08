@@ -33,6 +33,8 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         }])
     }
     const draw = (e:React.MouseEvent<HTMLCanvasElement>) =>{
+        e.preventDefault();
+        e.stopPropagation()
         if(!refCanvas.current) return;
         if(!drawing) return;
         const elementCanvas = refCanvas.current
@@ -51,11 +53,13 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         context2d?.beginPath();
         context2d?.moveTo(points[0].x,points[0].y);
        
-        for (let i = 1; i < points.length - 2; i++) {
+        for (let i = 1 ; i < points.length - 2; i++) {
             const xc = (points[i].x + points[i + 1].x) / 2;
             const yc = (points[i].y + points[i + 1].y) / 2;
+            
             context2d?.quadraticCurveTo(points[i].x, points[i].y, xc, yc);
         }
+        
         context2d?.stroke();
 
     }
@@ -65,6 +69,7 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         if(!refCanvas.current) return;
         const elementCanvas = refCanvas.current
         setSignature(elementCanvas.toDataURL())
+
         setPoints([])
         setLastX(undefined)
         setLastY(undefined)
@@ -83,6 +88,7 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
             context2d!.strokeStyle = strokeColor
             context2d!.lineCap = "round"
             context2d!.lineJoin = "round"
+        
         }
         initializeCanvas()
     },[])
@@ -92,15 +98,12 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         width={width}
         height={height}
         style={{
+            border:"1px #000 solid",
             background:"white"
+            
         }}
         onClick={handleClick}
-     
         onMouseMove={draw}
-        // onMouseUp={stopDrawing}
-        // onMouseDown={startDrawing}
-        // onMouseMove={draw}
-        // onMouseUp={stopDrawing}
 
     />
   )

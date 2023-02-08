@@ -9,6 +9,7 @@ function App() {
         <Signature 
             width={400}
             height={400}
+            lineWidth={2.5}
         />
     </div>
   )
