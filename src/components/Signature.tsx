@@ -50,8 +50,7 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         setPoints([...points,{x,y}])
         context2d?.beginPath();
         context2d?.moveTo(points[0].x,points[0].y);
-        context2d!.lineCap = "round"
-        context2d!.lineJoin = "round"
+       
         for (let i = 1; i < points.length - 2; i++) {
             const xc = (points[i].x + points[i + 1].x) / 2;
             const yc = (points[i].y + points[i + 1].y) / 2;
@@ -82,6 +81,8 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
             const context2d = elementCanvas.getContext("2d")
             context2d!.lineWidth = lineWidth
             context2d!.strokeStyle = strokeColor
+            context2d!.lineCap = "round"
+            context2d!.lineJoin = "round"
         }
         initializeCanvas()
     },[])
@@ -95,7 +96,8 @@ export const Signature = ({width=200,height=100,strokeColor="#00-",lineWidth=2}:
         }}
         onClick={handleClick}
      
-        onMouseMove={drawing ? draw : () => {}}
+        onMouseMove={draw}
+        // onMouseUp={stopDrawing}
         // onMouseDown={startDrawing}
         // onMouseMove={draw}
         // onMouseUp={stopDrawing}
