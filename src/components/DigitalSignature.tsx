@@ -1,16 +1,17 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import SignaturePad, { Options } from 'signature_pad';
+import  SignaturePad,{ Options } from 'signature_pad';
 
-interface MySignaturePadProps extends Options {
+
+export interface DigitalSignatureProps extends Options {
     canvasProps?: React.CanvasHTMLAttributes<HTMLCanvasElement>
     borderStyle?:string;
     signaturePadRef?: React.MutableRefObject<SignaturePad | undefined>;
 }
 
-export const MySignaturePad = (props: MySignaturePadProps) => {
+const DigitalSignature = (props: DigitalSignatureProps) => {
     const refCanvas = useRef<HTMLCanvasElement>(null);
     const refSignaturePad = useRef<SignaturePad>()
-    const { signaturePadRef,
+    const { signaturePadRef, 
             canvasProps,
             ...propsSignPad} = props
 
@@ -20,6 +21,7 @@ export const MySignaturePad = (props: MySignaturePadProps) => {
     }
     const getSignPad = (): SignaturePad => {
         if (!refSignaturePad.current) throw new Error("Reference not found (Don't worry probably is currently Mounting or Unmnounting)");
+        if (!(refSignaturePad.current instanceof SignaturePad)) throw new Error("Object is not an instance of SignaturePad");
         return refSignaturePad.current
     }
 
@@ -40,9 +42,10 @@ export const MySignaturePad = (props: MySignaturePadProps) => {
 
     const resizeCanvas = useCallback(() => {
         const canvas = getCanvasElement();
-        canvas.width = canvas.clientWidth
-        canvas.height = canvas.clientHeight
-      
+        const ratio =  Math.max(window.devicePixelRatio || 1, 1);
+        canvas.width = canvas.offsetWidth * ratio;
+        canvas.height = canvas.offsetHeight * ratio;
+        canvas.getContext("2d")?.scale(ratio, ratio);
         clearCanvas()
     },[refCanvas.current])
 
@@ -50,12 +53,15 @@ export const MySignaturePad = (props: MySignaturePadProps) => {
 
         const initializeCanvas = () => {
             const canvas = getCanvasElement()
+            if(!canvas)return;
+
             const signaturePad = new SignaturePad(canvas,propsSignPad)
             refSignaturePad.current = signaturePad
             if (signaturePadRef) {
                 signaturePadRef.current = signaturePad;
             }
             initPad()
+           
         }
         initializeCanvas()
         window.addEventListener('resize', resizeCanvas)
@@ -66,8 +72,9 @@ export const MySignaturePad = (props: MySignaturePadProps) => {
     return (
         <canvas
             ref={refCanvas}
+            data-testid="digital-signature"
             {...canvasProps}
-      
         />
     )
 }
+export default DigitalSignature;
